@@ -90,3 +90,19 @@ server.get("/products", function (req, res, next) {
     res.send(products);
   });
 });
+
+// GET request for getting product by its id
+server.get("/products/:_id", function (req, res, next) {
+  productData.findOne({ _id: req.params._id }, function (error, product) {
+    // If there are any errors, pass them to next in the correct format
+    if (error) return next(new Error(JSON.stringify(error.errors)));
+
+    if (product) {
+      // return the product
+      res.send(product);
+    } else {
+      // Send 404 header if the product doesn't exist
+      res.send(404);
+    }
+  });
+});
