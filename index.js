@@ -1,5 +1,5 @@
 const SERVER = "product-api";
-const PORT = 3000;
+const PORT = 5000;
 const HOST = "127.0.0.1";
 
 let errors = require("restify-errors");
@@ -104,5 +104,28 @@ server.get("/products/:_id", function (req, res, next) {
       // Send 404 header if the product doesn't exist
       res.send(404);
     }
+  });
+});
+
+// DELETE request deleting by its id
+server.del("/products/:id", function (req, res, next) {
+  // Delete the product by finding its id
+  productData.delete(req.params.id, function (error) {
+    // If there are any errors, pass them to next in the correct format
+    if (error) return next(new Error(JSON.stringify(error.errors)));
+    // Send a 204 response (No Content) if successful
+    res.send(204);
+  });
+});
+
+// deleting all the products
+server.del("/products/alldelete", function (req, res, next) {
+  // Delete all products
+  productData.delete({}, function (error) {
+    // If there are any errors, pass them to next in the correct format
+    if (error) {
+      return next(new Error(JSON.stringify(error.errors)));
+    }
+    res.send(204);
   });
 });
