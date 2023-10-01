@@ -83,12 +83,10 @@ server.post("/products", function (req, res, next) {
   });
 });
 
-// GET -> for getting all the products
+// GET request -> for getting all the products
 server.get("/products", function (req, res, next) {
-  console.log("GET /products params=>" + JSON.stringify(req.params));
-
   productData.find({}, function (error, products) {
-    // Return all of the products in the system
+    // Return all the products
     res.send(products);
   });
 });
