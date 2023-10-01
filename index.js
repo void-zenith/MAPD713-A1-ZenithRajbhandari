@@ -14,7 +14,7 @@ let getRequestCount = 0;
 let postRequestCount = 0;
 
 server.listen(PORT, HOST, function () {
-  console.log(`Server ${server.name} listening to ${server.url}`);
+  console.log(`Server ${server.name} listening at ${server.url}`);
   console.log("All the available ports:");
   console.log("/product");
   console.log("/product/:id");
@@ -27,4 +27,26 @@ server.listen(PORT, HOST, function () {
       );
     });
   }
+});
+
+server.use(restify.plugins.fullResponse());
+server.use(restify.plugins.bodyParser());
+
+// Middleware for displaying get request and post request count
+server.use(function (req, res, next) {
+  console.log(`${req.route.path} ${req.method}: received request`);
+  // Update counters
+  if (req.method === "GET") {
+    getRequestCount++;
+  } else if (req.method === "POST") {
+    postRequestCount++;
+  }
+  console.log(
+    `Processed Request Count has => Get: ${getRequestCount}, Post: ${postRequestCount}`
+  );
+
+  res.once("finish", function () {
+    console.log(`${req.route.path} ${req.method}: sending response`);
+  });
+  next();
 });
