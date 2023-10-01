@@ -14,6 +14,7 @@ let getRequestCount = 0;
 let postRequestCount = 0;
 
 server.listen(PORT, HOST, function () {
+  //showing the initializaion in the terminal
   console.log(`Server ${server.name} listening at ${server.url}`);
   console.log("All the available ports:");
   console.log("/product");
@@ -29,6 +30,7 @@ server.listen(PORT, HOST, function () {
   }
 });
 
+///plugin of restidy for parsing all the body
 server.use(restify.plugins.fullResponse());
 server.use(restify.plugins.bodyParser());
 
@@ -74,6 +76,7 @@ server.post("/products", function (req, res, next) {
     quantity: req.body.quantity,
   };
 
+  //creating new data
   productData.create(newProduct, function (error, product) {
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new Error(JSON.stringify(error.errors)));
@@ -108,24 +111,29 @@ server.get("/products/:_id", function (req, res, next) {
 });
 
 // DELETE request deleting by its id
+
+// DELETE: Delete a product by its ID
 server.del("/products/:id", function (req, res, next) {
-  // Delete the product by finding its id
-  productData.delete(req.params.id, function (error) {
+  // Delete the product
+  productData.delete(req.params.id, function (error, product) {
     // If there are any errors, pass them to next in the correct format
     if (error) return next(new Error(JSON.stringify(error.errors)));
     // Send a 204 response (No Content) if successful
     res.send(204);
   });
-});
 
-// deleting all the products
-server.del("/products/alldelete", function (req, res, next) {
-  // Delete all products
-  productData.delete({}, function (error) {
-    // If there are any errors, pass them to next in the correct format
-    if (error) {
-      return next(new Error(JSON.stringify(error.errors)));
-    }
-    res.send(204);
+  // DELETE: Delete all products
+  server.del("/products", function (req, res, next) {
+    // Delete all products
+    productData.delete({}, function (error) {
+      // If there are any errors, pass them to next in the correct format
+      if (error) {
+        console.error(
+          `Error in DELETE /products: ${JSON.stringify(error.errors)}`
+        );
+        return next(new Error(JSON.stringify(error.errors)));
+      }
+      res.send(204);
+    });
   });
 });
